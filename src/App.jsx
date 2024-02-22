@@ -53,6 +53,9 @@ function App() {
   async function showForecast() {
     const getCityUrl = `http://api.openweathermap.org/geo/1.0/direct?q=${cityInputValue}&limit=1&appid=${API_KEY}`;
 
+    setIsLoading(true);
+    setError("");
+    
     try {
       await axios
         .get(getCityUrl)
@@ -70,6 +73,8 @@ function App() {
         });
     } catch (error) {
       setError("Failed to fetch weather data. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
   }
 
