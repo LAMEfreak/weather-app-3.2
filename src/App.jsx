@@ -28,21 +28,16 @@ function App() {
 
     e.preventDefault();
     try {
-      await axios
-        .get(getCityUrl)
-        .then((res) => res.data[0])
-        .then((cityGeoData) =>
-          axios.get(
-            `https://api.openweathermap.org/data/2.5/weather?lat=${cityGeoData.lat}&lon=${cityGeoData.lon}&appid=${API_KEY}&units=metric`
-          )
-        )
-        // Handle response to show current weather
-        .then((res) => {
-          console.log("Response:", res);
-          const { data: weatherData } = res;
-          console.log("Weather Data:", weatherData);
-          setWeatherData(weatherData);
-        });
+      const result = await axios.get(getCityUrl);
+      const cityGeoData = result.data[0];
+      const currentWeatherData = await axios.get(
+        `https://api.openweathermap.org/data/2.5/weather?lat=${cityGeoData.lat}&lon=${cityGeoData.lon}&appid=${API_KEY}&units=metric`
+      );
+      // Handle response to show current weather
+      console.log("Response:", currentWeatherData);
+      const { data: weatherData } = currentWeatherData;
+      console.log("Weather Data:", weatherData);
+      setWeatherData(weatherData);
     } catch (error) {
       setError("Failed to fetch weather data. Please try again.");
     } finally {
@@ -55,22 +50,16 @@ function App() {
 
     setIsLoading(true);
     setError("");
-    
+
     try {
-      await axios
-        .get(getCityUrl)
-        .then((res) => res.data[0])
-        .then((cityGeoData) =>
-          axios.get(
-            `https://api.openweathermap.org/data/2.5/forecast?lat=${cityGeoData.lat}&lon=${cityGeoData.lon}&cnt=11&appid=${API_KEY}&units=metric`
-          )
-        )
-        // Handle response to show forecast
-        .then((res) => {
-          console.log("Forecast Response:", res);
-          const filteredForecastData = res.data.list.slice(2);
-          setForecastData(filteredForecastData);
-        });
+      const result = await axios.get(getCityUrl);
+      const cityGeoData = result.data[0];
+      const forecastData = await axios.get(
+        `https://api.openweathermap.org/data/2.5/forecast?lat=${cityGeoData.lat}&lon=${cityGeoData.lon}&cnt=11&appid=${API_KEY}&units=metric`
+      );
+      console.log("Forecast Data:", forecastData);
+      const filteredForecastData = forecastData.data.list.slice(2);
+      setForecastData(filteredForecastData);
     } catch (error) {
       setError("Failed to fetch weather data. Please try again.");
     } finally {
